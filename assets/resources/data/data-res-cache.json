@@ -1,0 +1,6 @@
+{
+  "json": ["data"],
+  "prefab": ["prefab/ui", "prefab/character"],
+  "sprite": ["icons"],
+  "sound": ["sound"]
+}
