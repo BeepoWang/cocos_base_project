@@ -1,15 +1,19 @@
-type EventHandler<T> = (data: T) => any;
 
-interface EventItem<T> {
-  handler: EventHandler<T>
+interface EventItem {
+  handler: Function
   content?: any
 }
 
 class EventManager {
 
-  private _eventMap: Map<string, EventItem<unknown>[]> = new Map()
-
-  public on<T>(eventName: string, handler: EventHandler<T>, content?: any) {
+  private _eventMap: Map<string, EventItem[]> = new Map()
+  /**
+   * 添加事件订阅
+   * @param eventName 事件名称
+   * @param func 事件函数
+   * @param ctx 执行上下文
+   */
+  public on(eventName: string, handler: Function, content?: any) {
     if (this._eventMap.has(eventName)) {
       this._eventMap.get(eventName).push({ handler, content })
     } else {
@@ -17,7 +21,12 @@ class EventManager {
     }
   }
 
-  public off<T>(eventName: string, handler: EventHandler<T>, content?: any) {
+  /**
+   * 取消事件订阅
+   * @param eventName 事件名称
+   * @param func 事件函数
+   */
+  public off(eventName: string, handler: Function, content?: any) {
     if (!this._eventMap.has(eventName)) return
     const index = this._eventMap
       .get(eventName)
@@ -27,10 +36,15 @@ class EventManager {
     }
   }
 
-  public emit<T = Record<string, any>>(eventName: string, data?: T, content?: any) {
+  /**
+  * 发布事件
+  * @param eventName 事件名称
+  * @param params 事件参数
+  */
+  public emit(eventName: string, ...params: any) {
     if (this._eventMap.has(eventName)) {
-      this._eventMap.get(eventName).forEach(({ handler, content: ctx }) => {
-        content ? handler.apply(content, [data]) : handler([data])
+      this._eventMap.get(eventName).forEach(({ handler, content }) => {
+        content ? handler.apply(content, params) : handler(...params)
       })
     }
   }

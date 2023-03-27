@@ -41,12 +41,12 @@ export class ThirdPersonCamera extends Component {
 
     start() {
         eventManager.on(EventDefine.JoystickEvent.Rotate, this.cameraRotate, this)
-        // eventManager.on(EventDefine.JoystickEvent.Zoom, this.cameraZoom, this)
+        eventManager.on(EventDefine.JoystickEvent.Zoom, this.cameraZoom, this)
     }
 
     onDestory() {
         eventManager.off(EventDefine.JoystickEvent.Rotate, this.cameraRotate, this)
-        // eventManager.off(EventDefine.JoystickEvent.Zoom, this.cameraZoom, this)
+        eventManager.off(EventDefine.JoystickEvent.Zoom, this.cameraZoom, this)
     }
 
     lateUpdate(deltaTime: number) {
@@ -55,7 +55,7 @@ export class ThirdPersonCamera extends Component {
 
         const t = Math.min(deltaTime / this.tweenTime, 1.0)
 
-        this.node.eulerAngles.lerp( this.targetAngles, t)
+        this.node.eulerAngles.lerp(this.targetAngles, t)
 
         v3_1.set(this.target.worldPosition)
         v3_1.add(this.lookAtOffset)
@@ -66,8 +66,9 @@ export class ThirdPersonCamera extends Component {
         this.node.setPosition(v3_1)
     }
 
-    private cameraRotate(data: Record<string, any>[]) {
-        let { rx: deltaX, ry: deltaY } = data[0]
+    private cameraRotate(data: any) {
+        console.log(data)
+        let { rx: deltaX, ry: deltaY } = data
         console.log('deltaX', deltaX, deltaY);
         if (this.rotateVHSeparately) {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -85,7 +86,8 @@ export class ThirdPersonCamera extends Component {
     }
 
     private cameraZoom(data) {
-        const delta = data[0]
+        console.log(data)
+        const delta = data
         this.targetDistance += delta * this.zoomSensitivity
         this.targetDistance = Math.min(Math.max(this.targetDistance, this.minDistance), this.maxDistance)
     }
